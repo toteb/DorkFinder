@@ -13,6 +13,14 @@ cd DorkFinder
 pip install -r requirements
 ```
 
+### Darwin
+
+```bash
+git clone https://github.com/glavstroy/DorkFinder
+cd DorkFinder
+pip install -r requirements
+```
+
 ### Docker
 
 ```bash
