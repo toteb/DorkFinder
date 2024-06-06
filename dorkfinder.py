@@ -11,6 +11,7 @@ import random
 import os
 import urllib.parse
 import sys
+import platform
 
 # ANSI color codes for better readability
 RED = "\33[91m"
@@ -34,13 +35,39 @@ def printBanner():
     print(banner)
     print('\n')
 
-# function performing Google search and analyze results
-def performGoogleSearch(url):
+# Logging function
+def log_debug_info(response):
+    #print status code and headers for debugging.
+    #print("Status Code:", response.status_code)
+    #print("Headers:", response.headers)
+
+    content = None
+    if response.headers.get('Content-Encoding') == 'gzip':
+        import gzip
+        from io import BytesIO
+        buf = BytesIO(response.content)
+        f = gzip.GzipFile(fileobj=buf)
+        content = f.read().decode('utf-8')
+    elif response.headers.get('Content-Encoding') == 'br':
+        try:
+            import brotli
+            content = brotli.decompress(response.content).decode('utf-8')
+        except Exception as e:
+            # Print decompression errros 
+            # print(f"Error decompressing Brotli content: {str(e)}")
+            content = response.content.decode('utf-8', errors='replace')
+    else:
+        content = response.text
+    # Print content for debugging
+    #print("Content:", content[:500])  # Print the first 500 characters of the decompressed content
+    return content
+
+def performGoogleSearchDarwin(url):
     headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101 Firefox/45.0",
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36",
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
         "Accept-Encoding": "gzip, deflate, br",
-        "Accept-Language": "ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3",
+        "Accept-Language": "en-US;q=0.5,en;q=0.3",
         "DNT": "1",
         "Connection": "keep-alive",
         "Upgrade-Insecure-Requests": "1",
@@ -48,29 +75,105 @@ def performGoogleSearch(url):
         "Sec-Fetch-Site": "cross-site",
         "TE": "trailers"
     }
+
     try:
-        r = requests.get('https://www.google.com/search?q='+urllib.parse.quote(url), headers=headers, timeout=95)
+        r = requests.get('https://www.google.com/search?q=' + urllib.parse.quote(url), headers=headers, timeout=95)
+        html = log_debug_info(r)  # Log response details
         if r.status_code == 200:
-            html = r.text
             soup = BeautifulSoup(html, 'html.parser')
             links = soup.find_all('h3')
         elif r.status_code == 429:
-            print(f"{RED}You've got a captcha from Google. Try again later or use another proxy{END}")
+            print("You've got a captcha from Google. Try again later or use another proxy")
             sys.exit()
-
         else:
-            print(f'{RED}Unknown error{END}')
+            print('Unknown error')
             sys.exit()
 
         if len(links) >= 1:
-            print(f'{BLUE}[+]{END} {url}   {CYAN}======>{END}  {GREEN}Found{END}')
+            print(f'[+] {url}   ======>  Found')
             return True
         else:
-            print(f'{BLUE}[!]{END} {url}   {CYAN}======>{END}  {RED}Not found{END}')
+            print(f'[!] {url}   ======>  Not found')
             return False
     except Exception as e:
-        print(f"{RED}An error occurred while performing Google search: {str(e)}{END}")
+        print(f"An error occurred while performing Google search: {str(e)}")
         sys.exit()
+
+def performGoogleSearchLinux(url):
+    headers = {
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Accept-Language": "en-US;q=0.5,en;q=0.3",
+        "DNT": "1",
+        "Connection": "keep-alive",
+        "Upgrade-Insecure-Requests": "1",
+        "Sec-Fetch-Dest": "document",
+        "Sec-Fetch-Site": "cross-site",
+        "TE": "trailers"
+    }
+
+    try:
+        r = requests.get('https://www.google.com/search?q=' + urllib.parse.quote(url), headers=headers, timeout=95)
+        if r.status_code == 200:
+            soup = BeautifulSoup(r.text, 'html.parser')
+            links = soup.find_all('h3')
+        elif r.status_code == 429:
+            print("You've got a captcha from Google. Try again later or use another proxy")
+            sys.exit()
+        else:
+            print('Unknown error')
+            sys.exit()
+
+        if len(links) >= 1:
+            print(f'[+] {url}   ======>  Found')
+            return True
+        else:
+            print(f'[!] {url}   ======>  Not found')
+            return False
+    except Exception as e:
+        print(f"An error occurred while performing Google search: {str(e)}")
+        sys.exit()
+
+# Function to clean output file
+def cleanOutput():
+    file_path = 'output.txt'
+    if os.path.exists(file_path):
+        os.remove(file_path)
+
+# Function to write URLs to output file
+def writeOutput(url):
+    file_path = 'output.txt'
+    with open(file_path, 'a', encoding='utf-8') as output_file:
+        output_file.write(f'[+] {url}\n')
+
+# Main function
+def main():
+    print(f"\033[1m[WARNING]\033[0m \033[1mIt's very important not to stress Google during usage of dork payloads. \n\033[1m[WARNING]\033[0m \033[1mThat's why we wait about 60 seconds between requests. Just be patient...\033[0m")
+
+    cleanOutput()
+
+    for url in url_list.urls:
+        if url_list.cli:
+            if platform.system() == "Darwin":
+                result = performGoogleSearchDarwin(url)
+            elif platform.system() == "Linux":
+                result = performGoogleSearchLinux(url)
+            else:
+                print("Unsupported platform")
+                sys.exit()
+                
+            if result and url_list.args.output:
+                writeOutput(url)
+        # Delay between requests
+        time.sleep(random.randint(58, 66))
+
+# Exception handling
+try:
+    main()
+except KeyboardInterrupt:
+    print('\nInterrupted')
+    exit()
 
 # function cleaning output file
 def cleanOutput():
