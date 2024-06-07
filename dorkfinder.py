@@ -149,7 +149,7 @@ def writeOutput(url):
 
 # Main function
 def main():
-    print(f"\033[1m{YELLOW}[WARNING]{END}\033[0m \033[1mIt's very important not to stress the Google during usage of dork payloads. \n\033[1m{YELLOW}[WARNING]{END}\033[0m \033[1mThat's why, we wait about 60 seconds delay between requests. Just be patient...\033[0m")
+    print(f"\033[1m{YELLOW}[WARNING]{END}\033[0m \033[1mIt's very important not to stress the Google during usage of dork payloads. \n\033[1m{YELLOW}[WARNING]{END}\033[0m \033[1mThat's why, we wait about 60 seconds between requests. Just be patient...\033[0m")
 
     cleanOutput()
 
@@ -190,7 +190,7 @@ def writeOutput(url):
 # main
 def main():
     printBanner()
-    print(f"\033[1m{YELLOW}[WARNING]{END}\033[0m \033[1mIt's very important not to stress the Google during usage of dork payloads. \n\033[1m{YELLOW}[WARNING]{END}\033[0m \033[1mThat's why, we wait about 60 seconds delay between requests. Just be patient...\033[0m")
+    print(f"\033[1m{YELLOW}[WARNING]{END}\033[0m \033[1mIt's very important not to stress the Google during usage of dork payloads. \n\033[1m{YELLOW}[WARNING]{END}\033[0m \033[1mThat's why, we wait about 60 seconds between requests. Just be patient...\033[0m")
 
     cleanOutput()
 
