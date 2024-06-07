@@ -83,20 +83,20 @@ def performGoogleSearchDarwin(url):
             soup = BeautifulSoup(html, 'html.parser')
             links = soup.find_all('h3')
         elif r.status_code == 429:
-            print("You've got a captcha from Google. Try again later or use another proxy")
+            print(f"{RED}You've got a captcha from Google. Try again later or use another proxy{END}")
             sys.exit()
         else:
-            print('Unknown error')
+            print(f'{RED}Unknown error{END}')
             sys.exit()
 
         if len(links) >= 1:
-            print(f'[+] {url}   ======>  Found')
+            print(f'{BLUE}[+]{END} {url}   {CYAN}======>{END}  {GREEN}Found{END}')
             return True
         else:
-            print(f'[!] {url}   ======>  Not found')
+            print(f'{BLUE}[!]{END} {url}   {CYAN}======>{END}  {RED}Not found{END}')
             return False
     except Exception as e:
-        print(f"An error occurred while performing Google search: {str(e)}")
+        print(f"{RED}An error occurred while performing Google search: {str(e)}{END}")
         sys.exit()
 
 def performGoogleSearchLinux(url):
@@ -149,7 +149,7 @@ def writeOutput(url):
 
 # Main function
 def main():
-    print(f"\033[1m[WARNING]\033[0m \033[1mIt's very important not to stress Google during usage of dork payloads. \n\033[1m[WARNING]\033[0m \033[1mThat's why we wait about 60 seconds between requests. Just be patient...\033[0m")
+    print(f"\033[1m{YELLOW}[WARNING]{END}\033[0m \033[1mIt's very important not to stress the Google during usage of dork payloads. \n\033[1m{YELLOW}[WARNING]{END}\033[0m \033[1mThat's why, we wait about 60 seconds delay between requests. Just be patient...\033[0m")
 
     cleanOutput()
 
@@ -190,7 +190,7 @@ def writeOutput(url):
 # main
 def main():
     printBanner()
-    print(f"\033[1m{YELLOW}[WARNING]{END}\033[0m \033[1mIt's very important not to stress the Google during usage of dork payloads. \nThat's why I cause about 60 seconds delay between requests. Just be patient...\033[0m")
+    print(f"\033[1m{YELLOW}[WARNING]{END}\033[0m \033[1mIt's very important not to stress the Google during usage of dork payloads. \n\033[1m{YELLOW}[WARNING]{END}\033[0m \033[1mThat's why, we wait about 60 seconds delay between requests. Just be patient...\033[0m")
 
     cleanOutput()
 
