@@ -88,7 +88,7 @@ user_agents = [
 def performGoogleSearchDarwin(url):
     user_agent = random.choice(user_agents)
     # print user agent for debbuging (uncomment)
-    print(user_agent)
+    # print(user_agent)
     headers = {
         "User-Agent": user_agent,
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
