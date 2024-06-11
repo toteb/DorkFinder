@@ -37,29 +37,35 @@ def printBanner():
 
 # Logging function
 def log_debug_info(response):
-    #print status code and headers for debugging.
-    #print("Status Code:", response.status_code)
-    #print("Headers:", response.headers)
+    # Print status code and headers for debugging
+    # print("Status Code:", response.status_code)
+    # print("Headers:", response.headers)
 
     content = None
-    if response.headers.get('Content-Encoding') == 'gzip':
-        import gzip
-        from io import BytesIO
-        buf = BytesIO(response.content)
-        f = gzip.GzipFile(fileobj=buf)
-        content = f.read().decode('utf-8')
-    elif response.headers.get('Content-Encoding') == 'br':
-        try:
-            import brotli
-            content = brotli.decompress(response.content).decode('utf-8')
-        except Exception as e:
-            # Print decompression errros 
-            # print(f"Error decompressing Brotli content: {str(e)}")
-            content = response.content.decode('utf-8', errors='replace')
-    else:
-        content = response.text
+    try:
+        if response.headers.get('Content-Encoding') == 'gzip':
+            import gzip
+            from io import BytesIO
+            buf = BytesIO(response.content)
+            f = gzip.GzipFile(fileobj=buf)
+            content = f.read().decode('utf-8')
+        elif response.headers.get('Content-Encoding') == 'br':
+            try:
+                import brotli
+                content = brotli.decompress(response.content).decode('utf-8')
+            except Exception as e:
+                # Print decompression errors
+                # print(f"Error decompressing Brotli content: {str(e)}")
+                content = response.content.decode('utf-8', errors='replace')
+        else:
+            content = response.text
+    except Exception as e:
+        # Log the error for debugging, but don't print it to avoid cluttering the output
+        # print(f"Error decompressing content: {str(e)}")
+        content = response.content.decode('utf-8', errors='replace')
+    
     # Print content for debugging
-    #print("Content:", content[:500])  # Print the first 500 characters of the decompressed content
+    # print("Content:", content[:500])  # Print the first 500 characters of the decompressed content
     return content
 
 user_agents = [
@@ -87,7 +93,7 @@ user_agents = [
 
 def performGoogleSearchDarwin(url):
     user_agent = random.choice(user_agents)
-    # print user agent for debbuging (uncomment)
+    # print user agent for debugging (uncomment)
     # print(user_agent)
     headers = {
         "User-Agent": user_agent,
@@ -141,8 +147,9 @@ def performGoogleSearchLinux(url):
 
     try:
         r = requests.get('https://www.google.com/search?q=' + urllib.parse.quote(url), headers=headers, timeout=95)
+        html = log_debug_info(r)  # Log response details
         if r.status_code == 200:
-            soup = BeautifulSoup(r.text, 'html.parser')
+            soup = BeautifulSoup(html, 'html.parser')
             links = soup.find_all('h3')
         elif r.status_code == 429:
             print("You've got a captcha from Google. Try again later or use another proxy")
@@ -160,7 +167,7 @@ def performGoogleSearchLinux(url):
     except Exception as e:
         print(f"An error occurred while performing Google search: {str(e)}")
         sys.exit()
-
+        
 # Function to clean output file
 def cleanOutput():
     file_path = 'output.txt'
