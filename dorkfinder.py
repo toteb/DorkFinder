@@ -2,6 +2,7 @@
 
 # Script created by glavstroy (hermione)
 # Thanks to @reewardius
+# reworked by nkolev
 
 import requests
 from bs4 import BeautifulSoup
@@ -182,6 +183,7 @@ def writeOutput(url):
 
 # Main function
 def main():
+    printBanner()
     print(f"\033[1m{YELLOW}[WARNING]{END}\033[0m \033[1mIt's very important not to stress the Google during usage of dork payloads. \n\033[1m{YELLOW}[WARNING]{END}\033[0m \033[1mThat's why, we wait about 60 seconds between requests. Just be patient...\033[0m")
 
     cleanOutput()
@@ -219,25 +221,3 @@ def writeOutput(url):
     file_path = 'output.txt'
     with open(file_path, 'a', encoding='utf-8') as output_file:
         output_file.write(f'[+] {url}\n')
-
-# main
-def main():
-    printBanner()
-    print(f"\033[1m{YELLOW}[WARNING]{END}\033[0m \033[1mIt's very important not to stress the Google during usage of dork payloads. \n\033[1m{YELLOW}[WARNING]{END}\033[0m \033[1mThat's why, we wait about 60 seconds between requests. Just be patient...\033[0m")
-
-    cleanOutput()
-
-    for url in url_list.urls:
-        if url_list.cli:
-            if performGoogleSearch(url):
-                if url_list.args.output:
-                    writeOutput(url)
-        # delay between requests
-        time.sleep(random.randint(58,66))
-
-# exception handling
-try:
-    main()
-except KeyboardInterrupt:
-    print(f'\nInterrupted')
-    exit()
