@@ -13,6 +13,8 @@ import os
 import urllib.parse
 import sys
 import platform
+import collections
+collections.Callable = collections.abc.Callable
 
 # ANSI color codes for better readability
 RED = "\33[91m"
