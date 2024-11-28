@@ -203,7 +203,7 @@ def main():
             if result and url_list.args.output:
                 writeOutput(url)
         # Delay between requests
-        time.sleep(random.randint(58, 66))
+        time.sleep(random.randint(65, 70))
 
 # Exception handling
 try:
