@@ -2,7 +2,7 @@
 
 # Script created by glavstroy (hermione)
 # Thanks to @reewardius
-# reworked by nkolev
+# reworked by mcn1k
 
 import requests
 from bs4 import BeautifulSoup
@@ -162,26 +162,28 @@ def performGoogleSearchLinux(url):
             sys.exit()
 
         if len(links) >= 1:
-            print(f'[+] {url}   ======>  Found')
-            return True
+            status = "Found"
+            print(f'{BLUE}[+]{END} {url}   {CYAN}======>{END}  {GREEN}{status}{END}')
         else:
-            print(f'[!] {url}   ======>  Not found')
-            return False
+            status = "Not Found"
+            print(f'{BLUE}[!]{END} {url}   {CYAN}======>{END}  {RED}{status}{END}')
+                
+        return status == "Found"
     except Exception as e:
         print(f"An error occurred while performing Google search: {str(e)}")
         sys.exit()
-        
-# Function to clean output file
+    
+# function cleaning output file
 def cleanOutput():
     file_path = 'output.txt'
     if os.path.exists(file_path):
         os.remove(file_path)
 
-# Function to write URLs to output file
-def writeOutput(url):
+# function writing URLs to output file
+def writeOutput(url, status):
     file_path = 'output.txt'
     with open(file_path, 'a', encoding='utf-8') as output_file:
-        output_file.write(f'[+] {url}\n')
+        output_file.write(f'[+] {url} ======> {status}\n')
 
 # Main function
 def main():
@@ -200,26 +202,14 @@ def main():
                 print("Unsupported platform")
                 sys.exit()
                 
-            if result and url_list.args.output:
-                writeOutput(url)
+            if url_list.args.output:
+                status = "Found" if result else "Not Found"
+                writeOutput(url, status)
         # Delay between requests
         time.sleep(random.randint(65, 70))
-
 # Exception handling
 try:
     main()
 except KeyboardInterrupt:
     print('\nInterrupted')
     exit()
-
-# function cleaning output file
-def cleanOutput():
-    file_path = 'output.txt'
-    if os.path.exists(file_path):
-        os.remove(file_path)
-
-# function writing URLs to output file
-def writeOutput(url):
-    file_path = 'output.txt'
-    with open(file_path, 'a', encoding='utf-8') as output_file:
-        output_file.write(f'[+] {url}\n')
