@@ -183,7 +183,7 @@ def cleanOutput():
 def writeOutput(url, status):
     file_path = 'output.txt'
     with open(file_path, 'a', encoding='utf-8') as output_file:
-        output_file.write(f'[+] {url} ======> {status}\n')
+        output_file.write(f'[+] {url} \n')
 
 # Main function
 def main():
